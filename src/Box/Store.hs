@@ -70,7 +70,6 @@ defaultBoxStore :: BoxStore
 defaultBoxStore =
   BoxStore [
       BoxFileS3 $ Address (Bucket "ambiata-dispensary") (Key "box/prod.v3")
-    , BoxFileS3 $ Address (Bucket "ambiata-dispensary") (Key "box/prod.amp.v3")
     ]
 
 -- Filepath munging for alt environments
