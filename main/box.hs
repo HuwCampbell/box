@@ -429,20 +429,19 @@ boxCommands e =
 
 rsyncP :: Environment -> Parser BoxCommand
 rsyncP e =
-  (fromM $ do
-    --
-    -- Monadic style so we can complete remote files.
-    q  <- oneM  $ queryP e
-    rs <- manyM $ rsyncArgP e g q
-    return $ BoxRSync q rs
-    --
-    -- We can't see through the above bind as queryP
-    -- doesn't have a default; meaning we can't generate
-    -- the help text for rsyncArgP. So add an unreachable
-    -- and unused parser to obtain an appropriate help
-    -- text.
-  ) <* many (argument (readerError "RSYNC unreachable argument encountered" :: ReadM ())
-                (metavar "RSYNC_ARGUMENTS" <> help "Extra arguments to pass to rsync." ))
+  --
+  -- Monadic style so we can complete remote files.
+  let m = do q <- oneM  $ queryP e
+             rs <- manyM $ rsyncArgP e g q
+             return $ BoxRSync q rs
+  --
+  -- We can't see through the above bind as queryP
+  -- doesn't have a default; meaning we can't generate
+  -- the help text for rsyncArgP. So add an unreachable
+  -- and unused parser to obtain an appropriate help
+  -- text.
+  in fromM m <* many (argument (readerError "RSYNC unreachable argument encountered" :: ReadM ())
+                        (metavar "RSYNC_ARGUMENTS" <> help "Extra arguments to pass to rsync." ))
 
 hostTypeP :: Parser HostType
 hostTypeP =
