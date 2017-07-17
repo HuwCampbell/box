@@ -570,9 +570,11 @@ rsyncCompleter env gwType qTarget =
               box'  = readProcess box (fmap T.unpack args') [] `catch` \(_ :: SomeException) -> return []
               limit = threadDelay 2000000 -- 2 seconds
             res <- race box' limit
-            return $ either lines (\() -> []) res
+            return $ either prefixedlines (\() -> []) res
     _
       -> return []
+  where
+    prefixedlines = fmap (':':) . lines
 
 ------------------------------------------------------------------------
 -- Command Arguments
